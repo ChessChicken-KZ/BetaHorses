@@ -1,0 +1,16 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "kz.chesschicken.example.mixin",
+  "compatibilityLevel": "JAVA_8",
+  "mixins": [
+    "JavaMixin"
+  ],
+  "server": [
+  ],
+  "client": [
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
