@@ -22,6 +22,7 @@ class ModelHorse : EntityModelBase() {
         body.method_1817(-5F, -10F, -7F, 8, 19, 9)
         body.setRotationPoint(1.0F, 6F, 2.0F)
 
+
         body.mirror = true
         setRotation(body, 1.570796F, 0.0F, 0.0F)
 

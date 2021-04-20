@@ -28,7 +28,7 @@
     ]
   },
   "mixins": [
-    "examplemod.mixins.json"
+    "betahorses.mixins.json"
   ],
 
   "depends": {

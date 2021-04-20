@@ -13,9 +13,7 @@ import net.minecraft.item.ItemInstance
 import net.minecraft.level.Level
 import net.minecraft.util.io.CompoundTag
 import net.minecraft.util.maths.MathHelper
-import net.modificationstation.stationapi.impl.common.entity.player.PlayerAPI.moveEntityWithHeading
 import org.lwjgl.input.Keyboard
-import kotlin.experimental.and
 
 
 class EntityHorse(l: Level) : AnimalBase(l) {
@@ -26,8 +24,6 @@ class EntityHorse(l: Level) : AnimalBase(l) {
     var sprintMax = 0
     var sprintCD = false
     var canMove = false
-    var entityAge = 0
-
 
     init {
         size = 1.0F
@@ -37,9 +33,64 @@ class EntityHorse(l: Level) : AnimalBase(l) {
         sprintCD = false
         canMove = false
         setSize(size, size * 1.5F)
+
         lvl = rand.nextInt(5)
         health = getMaxHealth()
-        init()
+
+        init();
+    }
+
+    constructor(level :Level, i :Int): this(level)
+    {
+        lvl = i;
+    }
+
+    protected fun init() {
+        field_1641 = 1.0f
+        when (lvl) {
+            0 -> texture = "/assets/betahorses/textures/horse/horseDarkBrown.png"
+            1 -> {
+                speedBase = 0.8f
+                texture = "/assets/betahorses/textures/horse/horseBrown.png"
+            }
+            2 -> {
+                field_1641 = 3f
+                texture = "/assets/betahorses/textures/horse/horseLightBrown.png"
+            }
+            3 -> {
+                speedBase = 0.6f
+                sprintMax = 125
+                field_1641 = 2.0f
+                texture = "/assets/betahorses/textures/horse/horseWhite.png"
+            }
+            4 -> {
+                texture = "/assets/betahorses/textures/horse/horseBlack.png"
+                sprintMax = 175
+            }
+            5 -> {
+                speedBase = 1.0f
+                field_1641 = 3f
+                texture = "/assets/betahorses/textures/horse/horseRainbow.png"
+                sprintMax = 250
+            }
+        }
+        setSize(size, size * 1.5f)
+    }
+
+    override fun damage(target: EntityBase?, amount: Int): Boolean {
+        if(target != null)
+        {
+            return false
+        }else
+        {
+            return super.damage(target, amount)
+        }
+    }
+
+    override fun handleFallDamage(height: Float) {
+        var h1 = height
+        h1 /= 2.0f
+        super.handleFallDamage(h1)
     }
 
     private fun getMaxHealth(): Int {
@@ -51,78 +102,17 @@ class EntityHorse(l: Level) : AnimalBase(l) {
         return 15
     }
 
-
-    private fun getSaddled(): Boolean {
-        return dataTracker.getByte(16) and 1 != 0.toByte()
-    }
-
-    private fun setSaddled(flag: Boolean) {
-        if (flag) {
-            dataTracker.setInt(16, java.lang.Byte.valueOf(1.toByte()))
-        } else {
-            dataTracker.setInt(16, java.lang.Byte.valueOf(0.toByte()))
-        }
-    }
-
-    private fun init() {
-        field_1641 = 1.0f
-        when (lvl) {
-            0 -> texture = "/assets/betahorses/textures/horse/horseDarkBrown.png"
-
-            1 -> {
-                speedBase = 0.8f
-                texture = "/assets/betahorses/textures/horse/horseBrown.png"
-            }
-
-            2 -> {
-                field_1641 = 3f
-                texture = "/assets/betahorses/textures/horse/horseLightBrown.png"
-            }
-
-            3 -> {
-                speedBase = 0.6f
-                sprintMax = 125
-                field_1641 = 2.0f
-                texture = "/assets/betahorses/textures/horse/horseWhite.png"
-            }
-
-            4 -> {
-                texture = "/assets/betahorses/textures/horse/horseBlack.png"
-                sprintMax = 175
-            }
-
-            5 -> {
-                speedBase = 1.0f
-                field_1641 = 3f
-                texture = "/assets/betahorses/textures/horse/horseRainbow.png"
-                sprintMax = 250
-            }
-
-        }
-        setSize(size, size * 1.5f)
-    }
-
-    override fun damage(target: EntityBase?, amount: Int): Boolean {
-        return if(target == passenger && target != null) false else super.damage(target, amount)
-    }
-
-    override fun handleFallDamage(height: Float) {
-        var height1: Float = height
-        height1 /= 2.0F
-        super.handleFallDamage(height1)
-    }
-
     override fun initDataTracker() {
         super.initDataTracker()
         dataTracker.startTracking(16, java.lang.Byte.valueOf(0.toByte()))
     }
 
     override fun writeCustomDataToTag(tag: CompoundTag?) {
-        super.writeCustomDataToTag(tag)
-        tag?.put("Saddle", getSaddled())
-        tag?.put("canMove", canMove)
-        tag?.put("lvl", lvl)
-        tag?.put("size", size)
+        super.writeCustomDataToTag(tag!!)
+        tag.put("Saddle", getSaddled())
+        tag.put("canMove", canMove)
+        tag.put("lvl", lvl)
+        tag.put("size", size)
     }
 
     override fun readCustomDataFromTag(tag: CompoundTag?) {
@@ -134,102 +124,100 @@ class EntityHorse(l: Level) : AnimalBase(l) {
         init()
     }
 
-    override fun canSpawn(): Boolean {
-        val i = MathHelper.floor(x)
-        val j = MathHelper.floor(boundingBox.minY)
-        val k = MathHelper.floor(z)
-        return level.getTileId(i,j - 1,k) == BlockBase.GRASS.id || level.getTileId(i,j - 1,k) == BlockBase.SNOW.id
-    }
 
-    override fun getMobDrops(): Int {
-        return if(method_1359())
-            ItemBase.cookedPorkchop.id
-        else
-            ItemBase.leather.id
-    }
-
-    override fun method_920() {
-        if(getSaddled())
+    override fun interact(entityplayer: PlayerBase?): Boolean {
+        if (entityplayer!!.method_1373())
         {
-            if(removed)
-                super.method_920()
+            canMove = !canMove;
+            return true;
         }
-        else
-            super.method_920()
-
-    }
-
-    override fun getMountedHeightOffset(): Double {
-        return field_1641.toDouble() - 0.30000001192092896
-    }
-
-    override fun getAmbientSound(): String {
-        return "mob.villager.default"
-    }
-
-    override fun getHurtSound(): String {
-        return "mob.villager.defaulthurt"
-    }
-
-    override fun getDeathSound(): String {
-        return "mob.villager.defaultdeath"
-    }
-
-    override fun interact(arg: PlayerBase?): Boolean {
-        if(arg?.method_1373()!!) {
-            canMove = !canMove
-            return true
-        }
-        if(arg.inventory.heldItem.type != null)
-        {
-            if(arg.inventory.heldItem.type == ItemBase.wheat)
-            {
-                if(health >= getMaxHealth())
-                {
-                    return super.interact(arg)
+        if (entityplayer.inventory.getHeldItem() != null) {
+            if (entityplayer.inventory.getHeldItem().getType() === ItemBase.wheat) {
+                if (health >= getMaxHealth()) {
+                    return super.interact(entityplayer)
                 }
-                if(arg.inventory.decreaseAmountOfItem(ItemBase.wheat.id))
-                {
+                if (entityplayer.inventory.decreaseAmountOfItem(ItemBase.wheat.id)) {
                     for (i in 3 downTo 1) {
                         level.addParticle(
-                            "heart",
-                            x + rand.nextFloat().toDouble() - 0.5,
-                            y + 0.5,
-                            z + rand.nextFloat().toDouble() - 0.5,
-                            1.0,
-                            1.0,
-                            1.0
+                            "heart", x + rand.nextFloat().toDouble() - 0.5, y + 0.5, z + rand.nextFloat()
+                                .toDouble() - 0.5, 1.0, 1.0, 1.0
                         )
                     }
                     addHealth(5)
                     return true
                 }
-            }
-            else
-            {
-                return mount(arg)
+            } else {
+                return mount(entityplayer)
             }
         }
-
-        return if(getSaddled() && !level.isClient && (passenger == null || passenger == arg) ) {
-            arg.startRiding(this)
+        return if (getSaddled() && !level.isClient && (passenger == null || passenger === entityplayer)) {
+            entityplayer.startRiding(this)
             true
-        } else false
-
+        } else {
+            false
+        }
     }
 
-    private fun mount(entityplayer: PlayerBase): Boolean {
+    fun mount(entityplayer: PlayerBase): Boolean {
         if (getSaddled() && !level.isClient) {
             entityplayer.startRiding(this)
             return true
         }
-        return if (size >= 1.0f && entityplayer.inventory.containsItem(ItemInstance(ItemBase.saddle, 1)) && !getSaddled()) {
+        return if (size >= 1.0f && entityplayer.inventory.containsItem(ItemInstance(ItemBase.saddle)) && !getSaddled()) {
             entityplayer.inventory.decreaseAmountOfItem(ItemBase.saddle.id)
             setSaddled(true)
             false
         } else {
             false
         }
+    }
+
+    override fun getMountedHeightOffset(): Double {
+        return height - 0.30000001192092896
+    }
+
+    override fun method_920() {
+        if(getSaddled())
+        {
+            if(removed)
+            {
+                super.method_920()
+
+            }
+        }
+        else
+            super.method_920()
+    }
+
+    override fun getMobDrops(): Int {
+        if (method_1359())
+        {
+            return ItemBase.cookedPorkchop.id;
+        }
+        else
+        {
+            return ItemBase.leather.id;
+        }
+    }
+
+    fun getSaddled(): Boolean {
+        return (dataTracker.getByte(16).toInt() and 1) != 0
+    }
+
+    fun setSaddled(flag: Boolean) {
+        if (flag) {
+            dataTracker.setInt(16, java.lang.Byte.valueOf(1.toByte()))
+        } else {
+            dataTracker.setInt(16, java.lang.Byte.valueOf(0.toByte()))
+        }
+    }
+
+    override fun canSpawn(): Boolean {
+        val i: Int = MathHelper.floor(x)
+        val j: Int = MathHelper.floor(boundingBox.minY)
+        val k: Int = MathHelper.floor(z)
+        return level.getTileId(i, j - 1, k) == BlockBase.GRASS.id || level.getTileId(i, j - 1, k) == BlockBase.SNOW.id
+
     }
 
 
@@ -240,7 +228,7 @@ class EntityHorse(l: Level) : AnimalBase(l) {
                     .toDouble() - 0.5, rand.nextDouble(), rand.nextDouble(), rand.nextDouble()
             )
         }
-        if ((size < 1.2) && entityAge % 200 == 0) {
+        if (size < 1.2) {
             size += 0.01f
         }
         if (sprintCount != 0) {
@@ -252,7 +240,7 @@ class EntityHorse(l: Level) : AnimalBase(l) {
             sprintCD = false
         }
         if (passenger != null) {
-            field_1051 = 0
+            //newPosRotationIncrements = 0
             movementSpeed = speedBase
             val entityliving: Living = passenger as Living
             if (passenger is PlayerBase) {
@@ -264,12 +252,12 @@ class EntityHorse(l: Level) : AnimalBase(l) {
                 }
                 if ((entityliving as AccessorLiving).field_1029() == 0.0f) {
                     if (field_1029 < 0.0f) {
-                        field_1029 += 0.029999999999999999.toFloat()
+                        field_1029 += 0.029999999999999999f
                         if (field_1029 > 0.0f) {
                             field_1029 = 0.0f
                         }
                     } else if (field_1029 > 0.0f) {
-                        field_1029 -= 0.029999999999999999.toFloat()
+                        field_1029 -= 0.029999999999999999f
                         if (field_1029 < 0.0f) {
                             field_1029 = 0.0f
                         }
@@ -277,16 +265,15 @@ class EntityHorse(l: Level) : AnimalBase(l) {
                 }
                 if (field_1029 >= 1.0f && entityliving.method_1373() && !sprintCD) {
                     sprintCount += 2
-
+                    //entityliving.addPotionEffect(PotionEffect(Potion.moveSpeed.id, 2, 2))
                     if (field_1029 < 1.7) {
                         field_1029 += 0.03f
                     }
                 } else if (field_1029 > 1.0f) {
-                    field_1029 -= 0.10000000000000001.toFloat()
+                    field_1029 -= 0.10000000000000001f
                 }
                 velocityZ = (MathHelper.cos(Math.toRadians(entityliving.yaw.toDouble()).toFloat()) * (field_1029 * movementSpeed)).toDouble()
-                velocityX =
-                    (-MathHelper.sin(Math.toRadians(entityliving.yaw.toDouble()).toFloat()) * (field_1029 * movementSpeed)).toDouble()
+                velocityX = (-MathHelper.sin(Math.toRadians(entityliving.yaw.toDouble()).toFloat()) * (field_1029 * movementSpeed)).toDouble()
                 if (Keyboard.isKeyDown(57) && (onGround || field_1612) && passenger is PlayerBase && velocityY < 0.69999998807907104) {
                     velocityY++
                 }
@@ -301,12 +288,12 @@ class EntityHorse(l: Level) : AnimalBase(l) {
                 }
                 if ((entityliving as AccessorLiving).field_1029() == 0.0f) {
                     if (field_1029 < 0.0f) {
-                        field_1029 += 0.029999999999999999.toFloat()
+                        field_1029 += 0.029999999999999999f
                         if (field_1029 > 0.0f) {
                             field_1029 = 0.0f
                         }
                     } else if (field_1029 > 0.0f) {
-                        field_1029 -= 0.029999999999999999.toFloat()
+                        field_1029 -= 0.029999999999999999f
                         if (field_1029 < 0.0f) {
                             field_1029 = 0.0f
                         }
@@ -317,7 +304,7 @@ class EntityHorse(l: Level) : AnimalBase(l) {
                     if (((passenger as MonsterBase) as AccessorMonsterBase).attackTarget().passenger != null) {
                         val entityliving1: Living =
                             ((passenger as MonsterBase) as AccessorMonsterBase).attackTarget().passenger as Living
-                        if ((entityliving1 as AccessorLiving).field_1029() < 0.5) {
+                        if ((entityliving as AccessorLiving).field_1029() < 0.5) {
                             field_1029 /= 3f
                         }
                     } else {
@@ -338,7 +325,7 @@ class EntityHorse(l: Level) : AnimalBase(l) {
                 velocityX /= 3.0
                 velocityZ /= 3.0
             }
-            moveEntityWithHeading(passenger as PlayerBase, field_1029, 0.0f)
+            travel(field_1029, 0.0f)
             field_1048 = limbDistance
             val d: Double = x - prevX
             val d1: Double = z - prevZ
@@ -351,19 +338,7 @@ class EntityHorse(l: Level) : AnimalBase(l) {
         } else {
             super.updateDespawnCounter()
         }
-        entityAge++
     }
-
-
-
-
-
-
-
-
-
-
-
 
 
 }
