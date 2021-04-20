@@ -140,13 +140,13 @@ open class EntityHorse(l: Level) : AnimalBase(l) {
                 if (health >= getMaxHealth()) {
                     return super.interact(entityplayer)
                 }
-                return healHorse(5, entityplayer)
-            } else if(entityplayer.inventory.heldItem.type == BetaHorsesListener.blockHay)
+                return healHorse(5, entityplayer, ItemBase.wheat.id)
+            } else if(entityplayer.inventory.heldItem.type!!.id == BetaHorsesListener.blockHay!!.id)
             {
                 if (health >= getMaxHealth()) {
                     return super.interact(entityplayer)
                 }
-                return healHorse(getMaxHealth(), entityplayer)
+                return healHorse(getMaxHealth(), entityplayer, BetaHorsesListener.blockHay!!.id)
             }
             else {
                 return mount(entityplayer)
@@ -158,11 +158,9 @@ open class EntityHorse(l: Level) : AnimalBase(l) {
         } else false
 
     }
-    private fun healHorse(int: Int, p: PlayerBase): Boolean
+    private fun healHorse(int: Int, p: PlayerBase, id: Int): Boolean
     {
-
-
-        if (p.inventory.decreaseAmountOfItem(ItemBase.wheat.id)) {
+        if (p.inventory.decreaseAmountOfItem(id)) {
             for (i in 3 downTo 1) {
                 level.addParticle(
                     "heart", x + rand.nextFloat().toDouble() - 0.5, y + 0.5, z + rand.nextFloat()
@@ -360,5 +358,13 @@ open class EntityHorse(l: Level) : AnimalBase(l) {
         }
     }
 
+
+    override fun getHurtSound(): String? {
+        return "mob.cowhurt"
+    }
+
+    override fun getDeathSound(): String? {
+        return "mob.cowhurt"
+    }
 
 }

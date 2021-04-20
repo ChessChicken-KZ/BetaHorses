@@ -29,11 +29,12 @@ import java.io.InputStreamReader
 import java.net.URL
 
 class BetaHorsesListener {
-    @Entrypoint.ModID var modID: ModID? = null
 
 
     companion object {
-        var needToRemind = false
+        @Entrypoint.ModID var modID: ModID? = null
+
+        var needToRemind = ""
 
         var itemCharSaddle: net.minecraft.item.ItemBase? = null
         var itemHorseInfo: net.minecraft.item.ItemBase? = null
@@ -50,7 +51,7 @@ class BetaHorsesListener {
         Runnable {
             val url = URL("https://raw.githubusercontent.com/ChessChicken-KZ/BetaHorses/master/UPDATE.txt")
             val br = BufferedReader(InputStreamReader(url.openStream()))
-            needToRemind = br.readLine().equals(modID!!.version.friendlyString)
+            needToRemind = br.readLine()
 
             br.close()
         }.run()
@@ -115,6 +116,7 @@ class BetaHorsesListener {
             SmeltingRegistry.addSmeltingRecipe(ItemInstance(ItemBase.saddle), ItemInstance(itemCharSaddle))
         }
     }
+
 
 
 

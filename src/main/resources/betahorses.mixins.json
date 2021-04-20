@@ -5,11 +5,13 @@
   "compatibilityLevel": "JAVA_8",
   "mixins": [
     "AccessorLiving",
-    "AccessorMonsterBase"
+    "AccessorMonsterBase",
+    "MixinBiome"
   ],
   "server": [
   ],
   "client": [
+    "MixinMinecraft"
   ],
   "injectors": {
     "defaultRequire": 1
