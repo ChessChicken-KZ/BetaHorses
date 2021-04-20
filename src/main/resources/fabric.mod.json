@@ -1,12 +1,12 @@
 {
   "schemaVersion": 1,
-  "id": "examplemod",
+  "id": "betahorses",
   "version": "${version}",
 
-  "name": "Example Mod StAPI Kotlin Edition",
-  "description": "This is an example description! Tell everyone what your mod is about!",
+  "name": "Beta Horses",
+  "description": "Improve you life with horses!",
   "authors": [
-    "Me!"
+    "ChessChicken-KZ"
   ],
   "contact": {
     "homepage": "https://chesschicken-kz.github.io/",
@@ -14,24 +14,17 @@
   },
 
   "license": "CC0-1.0",
-  "icon": "assets/examplemod/icon.png",
+  "icon": "assets/betahorses/icon.png",
 
   "environment": "*",
   "entrypoints": {
     "stationapi:event_bus": [
-      "kz.chesschicken.example.events.init.AchievementListener",
-      "kz.chesschicken.example.events.init.BlockListener",
-      "kz.chesschicken.example.events.init.ItemListener",
-      "kz.chesschicken.example.events.init.PlayerHandlerListener",
-      "kz.chesschicken.example.events.init.RecipeListener"
+      "kz.chesschicken.betahorses.init.EntityHorseListener"
     ],
     "stationapi:event_bus_client": [
-      "kz.chesschicken.example.events.init.ModelListener",
-      "kz.chesschicken.example.events.init.KeyBindingListener",
-      "kz.chesschicken.example.events.init.TextureListener"
+
     ],
     "stationapi:event_bus_server": [
-      "kz.chesschicken.example.events.init.ServerInitListener"
     ]
   },
   "mixins": [

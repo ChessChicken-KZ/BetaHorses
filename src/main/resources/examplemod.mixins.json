@@ -1,10 +1,12 @@
 {
   "required": true,
   "minVersion": "0.8",
-  "package": "kz.chesschicken.example.mixin",
+  "package": "kz.chesschicken.betahorses.mixin",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
-    "JavaMixin"
+    "AccessorLiving",
+    "AccessorMonsterBase",
+    "MixinSaddle"
   ],
   "server": [
   ],
