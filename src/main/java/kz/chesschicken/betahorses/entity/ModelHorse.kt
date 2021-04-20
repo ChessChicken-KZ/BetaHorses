@@ -1,24 +1,23 @@
 package kz.chesschicken.betahorses.entity
 
 import net.minecraft.client.model.Cuboid
-import net.minecraft.client.render.entity.model.EntityModelBase
 import net.minecraft.util.maths.MathHelper
 
-class ModelHorse : EntityModelBase() {
-    var body: Cuboid = Cuboid(26, 0)
-    var tail: Cuboid = Cuboid(24, 36)
-    var neck: Cuboid = Cuboid(0, 32)
-    var head: Cuboid = Cuboid(0, 0)
-    var leg2: Cuboid = Cuboid(0, 15)
-    var leg4: Cuboid = Cuboid(0, 15)
-    var leg3: Cuboid = Cuboid(0, 15)
-    var leg1: Cuboid = Cuboid(0, 15)
-    var hair: Cuboid = Cuboid(16, 16)
-    var ear1: Cuboid = Cuboid(22, 14)
-    var ear2: Cuboid = Cuboid(22, 14)
-    var saddle: Cuboid = Cuboid(35,35)
+class ModelHorse : net.minecraft.client.render.entity.model.EntityModelBase() {
+    private var body: Cuboid = Cuboid(26, 0)
+    private var tail: Cuboid = Cuboid(16, 19)
+    private var neck: Cuboid = Cuboid(35, 9)
+    private var head: Cuboid = Cuboid(0, 0)
+    private var leg2: Cuboid = Cuboid(0, 15)
+    private var leg4: Cuboid = Cuboid(0, 15)
+    private var leg3: Cuboid = Cuboid(0, 15)
+    private var leg1: Cuboid = Cuboid(0, 15)
+    private var hair: Cuboid = Cuboid(16, 16)
+    private var ear1: Cuboid = Cuboid(22, 14)
+    private var ear2: Cuboid = Cuboid(22, 14)
 
     init {
+
         body.method_1817(-5F, -10F, -7F, 8, 19, 9)
         body.setRotationPoint(1.0F, 6F, 2.0F)
 
@@ -76,10 +75,6 @@ class ModelHorse : EntityModelBase() {
         ear2.mirror = true
         setRotation(ear2, 0.0F, 0.0F, 0.0F)
 
-        saddle.method_1817(0.0F, 0.0F, 0.0F, 8, 7, 9)
-        saddle.setRotationPoint(-4F, 3.9F, -2F)
-        saddle.mirror = true
-        setRotation(saddle, 0.0F, 0.0F, 0.0F)
     }
 
     private fun setRotation(model: Cuboid, f: Float, f1: Float, f2: Float) {
@@ -102,7 +97,6 @@ class ModelHorse : EntityModelBase() {
         hair.method_1815(f5)
         ear1.method_1815(f5)
         ear2.method_1815(f5)
-        saddle.method_1815(f5)
     }
 
     override fun setAngles(f: Float, f1: Float, f2: Float, f3: Float, f4: Float, f5: Float) {

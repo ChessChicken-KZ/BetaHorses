@@ -19,7 +19,7 @@
   "environment": "*",
   "entrypoints": {
     "stationapi:event_bus": [
-      "kz.chesschicken.betahorses.init.EntityHorseListener"
+      "kz.chesschicken.betahorses.init.BetaHorsesListener"
     ],
     "stationapi:event_bus_client": [
 

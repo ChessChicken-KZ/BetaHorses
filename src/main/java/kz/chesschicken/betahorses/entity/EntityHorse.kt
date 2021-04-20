@@ -1,5 +1,6 @@
 package kz.chesschicken.betahorses.entity
 
+import kz.chesschicken.betahorses.init.BetaHorsesListener
 import kz.chesschicken.betahorses.mixin.AccessorLiving
 import kz.chesschicken.betahorses.mixin.AccessorMonsterBase
 import net.minecraft.block.BlockBase
@@ -36,7 +37,12 @@ open class EntityHorse(l: Level) : AnimalBase(l) {
         setSize(size, size * 1.5F)
 
 
-        lvl = rand.nextInt(5)
+        lvl = rand.nextInt(6)
+        if(lvl == 5)
+        {
+            if(rand.nextBoolean()) lvl--
+        }
+
         health = getMaxHealth()
 
         init()
@@ -129,22 +135,20 @@ open class EntityHorse(l: Level) : AnimalBase(l) {
             canMove = !canMove
             return true
         }
-        if (entityplayer.inventory.getHeldItem() != null) {
-            if (entityplayer.inventory.getHeldItem().getType() === ItemBase.wheat) {
+        if (entityplayer.inventory.heldItem != null) {
+            if (entityplayer.inventory.heldItem.type == ItemBase.wheat) {
                 if (health >= getMaxHealth()) {
                     return super.interact(entityplayer)
                 }
-                if (entityplayer.inventory.decreaseAmountOfItem(ItemBase.wheat.id)) {
-                    for (i in 3 downTo 1) {
-                        level.addParticle(
-                            "heart", x + rand.nextFloat().toDouble() - 0.5, y + 0.5, z + rand.nextFloat()
-                                .toDouble() - 0.5, 1.0, 1.0, 1.0
-                        )
-                    }
-                    addHealth(5)
-                    return true
+                return healHorse(5, entityplayer)
+            } else if(entityplayer.inventory.heldItem.type == BetaHorsesListener.blockHay)
+            {
+                if (health >= getMaxHealth()) {
+                    return super.interact(entityplayer)
                 }
-            } else {
+                return healHorse(getMaxHealth(), entityplayer)
+            }
+            else {
                 return mount(entityplayer)
             }
         }
@@ -153,6 +157,22 @@ open class EntityHorse(l: Level) : AnimalBase(l) {
             true
         } else false
 
+    }
+    private fun healHorse(int: Int, p: PlayerBase): Boolean
+    {
+
+
+        if (p.inventory.decreaseAmountOfItem(ItemBase.wheat.id)) {
+            for (i in 3 downTo 1) {
+                level.addParticle(
+                    "heart", x + rand.nextFloat().toDouble() - 0.5, y + 0.5, z + rand.nextFloat()
+                        .toDouble() - 0.5, 1.0, 1.0, 1.0
+                )
+            }
+            addHealth(int)
+            return true
+        }
+        return false
     }
 
     private fun mount(p: PlayerBase): Boolean {
@@ -181,12 +201,18 @@ open class EntityHorse(l: Level) : AnimalBase(l) {
     }
 
     override fun getMobDrops(): Int {
-        if(getSaddled()) return ItemBase.saddle.id
 
-        return if (method_1359())
-            ItemBase.cookedPorkchop.id
-        else
-            ItemBase.leather.id
+        return if (method_1359()) {
+            if(getSaddled())
+                BetaHorsesListener.blockHay!!.id
+            else
+                ItemBase.cookedPorkchop.id
+        } else {
+            if(getSaddled())
+                ItemBase.saddle.id
+            else
+                ItemBase.leather.id
+        }
 
     }
 
@@ -194,7 +220,7 @@ open class EntityHorse(l: Level) : AnimalBase(l) {
      * Get info about horse.
      * @return saddled or not.
      */
-    public fun getSaddled(): Boolean {
+    private fun getSaddled(): Boolean {
         return (dataTracker.getByte(16).toInt() and 1) != 0
     }
 
@@ -219,7 +245,7 @@ open class EntityHorse(l: Level) : AnimalBase(l) {
     override fun updateDespawnCounter() {
         if (lvl == 5) {
             level.addParticle(
-                "mobSpell", x + rand.nextFloat().toDouble() - 0.5, y + 1.0, z + rand.nextFloat()
+                "splash", x + rand.nextFloat().toDouble() - 0.5, y + 1.0, z + rand.nextFloat()
                     .toDouble() - 0.5, rand.nextDouble(), rand.nextDouble(), rand.nextDouble()
             )
         }
@@ -297,8 +323,7 @@ open class EntityHorse(l: Level) : AnimalBase(l) {
                 val f: Float = (entityliving.yaw - yaw) / 15f
                 if (field_1029 >= 0.80000000000000004 && rand.nextInt(16) == 0 && ((passenger as MonsterBase) as AccessorMonsterBase).attackTarget() != null) {
                     if (((passenger as MonsterBase) as AccessorMonsterBase).attackTarget().passenger != null) {
-                        val entityliving1: Living =
-                            ((passenger as MonsterBase) as AccessorMonsterBase).attackTarget().passenger as Living
+                        ((passenger as MonsterBase) as AccessorMonsterBase).attackTarget().passenger as Living
                         if ((entityliving as AccessorLiving).field_1029() < 0.5) {
                             field_1029 /= 3f
                         }

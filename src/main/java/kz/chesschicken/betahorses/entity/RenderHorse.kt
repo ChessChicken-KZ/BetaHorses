@@ -17,9 +17,6 @@ class RenderHorse(f: Float) : LivingEntityRenderer(ModelHorse(), f) {
         super.render(entityliving, d, d1, d2, f, f1)
     }
 
-
-
-
     override fun render(entity: EntityBase, x: Double, y: Double, z: Double, f: Float, f1: Float) {
         renderHorse(entity as Living, x, y, z, f, f1)
     }
