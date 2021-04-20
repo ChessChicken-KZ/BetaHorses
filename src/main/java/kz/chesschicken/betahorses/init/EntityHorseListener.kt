@@ -9,6 +9,7 @@ import net.modificationstation.stationapi.api.common.event.entity.EntityRegister
 import net.modificationstation.stationapi.api.common.event.mod.PostInit
 import net.modificationstation.stationapi.api.common.mod.entrypoint.Entrypoint
 import net.modificationstation.stationapi.api.common.registry.ModID
+import java.net.URL
 
 class EntityHorseListener {
     @Entrypoint.ModID var MOD_ID: ModID? = null
@@ -32,7 +33,9 @@ class EntityHorseListener {
     @EventListener(priority = ListenerPriority.LOW)
     fun doNothing(event: PostInit)
     {
-        System.out.println("Something something something")
+        Runnable {
+            var url: URL = URL("")
+        }
     }
 
 
