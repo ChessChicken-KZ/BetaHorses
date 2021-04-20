@@ -16,7 +16,7 @@ import net.minecraft.util.maths.MathHelper
 import org.lwjgl.input.Keyboard
 
 
-class EntityHorse(l: Level) : AnimalBase(l) {
+open class EntityHorse(l: Level) : AnimalBase(l) {
     var lvl = 0
     var size = 0f
     var speedBase = 0f
@@ -24,6 +24,7 @@ class EntityHorse(l: Level) : AnimalBase(l) {
     var sprintMax = 0
     var sprintCD = false
     var canMove = false
+    var owner = ""
 
     init {
         size = 1.0F
@@ -34,18 +35,14 @@ class EntityHorse(l: Level) : AnimalBase(l) {
         canMove = false
         setSize(size, size * 1.5F)
 
+
         lvl = rand.nextInt(5)
         health = getMaxHealth()
 
-        init();
+        init()
     }
 
-    constructor(level :Level, i :Int): this(level)
-    {
-        lvl = i;
-    }
-
-    protected fun init() {
+    private fun init() {
         field_1641 = 1.0f
         when (lvl) {
             0 -> texture = "/assets/betahorses/textures/horse/horseDarkBrown.png"
@@ -78,13 +75,11 @@ class EntityHorse(l: Level) : AnimalBase(l) {
     }
 
     override fun damage(target: EntityBase?, amount: Int): Boolean {
-        if(target != null)
-        {
-            return false
-        }else
-        {
-            return super.damage(target, amount)
-        }
+        return if(target != null)
+            false
+        else
+            super.damage(target, amount)
+
     }
 
     override fun handleFallDamage(height: Float) {
@@ -109,6 +104,7 @@ class EntityHorse(l: Level) : AnimalBase(l) {
 
     override fun writeCustomDataToTag(tag: CompoundTag?) {
         super.writeCustomDataToTag(tag!!)
+        tag.put("owner", owner)
         tag.put("Saddle", getSaddled())
         tag.put("canMove", canMove)
         tag.put("lvl", lvl)
@@ -117,10 +113,12 @@ class EntityHorse(l: Level) : AnimalBase(l) {
 
     override fun readCustomDataFromTag(tag: CompoundTag?) {
         super.readCustomDataFromTag(tag!!)
-        setSaddled(tag.getBoolean("Saddle"))
+        owner = tag.getString("owner")
+        setSaddled(tag.getBoolean("Saddle"), owner)
         canMove = tag.getBoolean("canMove")
         lvl = tag.getInt("lvl")
         size = tag.getFloat("size")
+
         init()
     }
 
@@ -128,8 +126,8 @@ class EntityHorse(l: Level) : AnimalBase(l) {
     override fun interact(entityplayer: PlayerBase?): Boolean {
         if (entityplayer!!.method_1373())
         {
-            canMove = !canMove;
-            return true;
+            canMove = !canMove
+            return true
         }
         if (entityplayer.inventory.getHeldItem() != null) {
             if (entityplayer.inventory.getHeldItem().getType() === ItemBase.wheat) {
@@ -150,26 +148,23 @@ class EntityHorse(l: Level) : AnimalBase(l) {
                 return mount(entityplayer)
             }
         }
-        return if (getSaddled() && !level.isClient && (passenger == null || passenger === entityplayer)) {
+        return if (getSaddled() && !level.isClient && (passenger == null || passenger == entityplayer) && entityplayer.name.equals(owner)) {
             entityplayer.startRiding(this)
             true
-        } else {
-            false
-        }
+        } else false
+
     }
 
-    fun mount(entityplayer: PlayerBase): Boolean {
-        if (getSaddled() && !level.isClient) {
-            entityplayer.startRiding(this)
+    private fun mount(p: PlayerBase): Boolean {
+        if (getSaddled() && !level.isClient && p.name.equals(owner)) {
+            p.startRiding(this)
             return true
         }
-        return if (size >= 1.0f && entityplayer.inventory.containsItem(ItemInstance(ItemBase.saddle)) && !getSaddled()) {
-            entityplayer.inventory.decreaseAmountOfItem(ItemBase.saddle.id)
-            setSaddled(true)
+        return if (size >= 1.0f && p.inventory.containsItem(ItemInstance(ItemBase.saddle)) && !getSaddled()) {
+            p.inventory.decreaseAmountOfItem(ItemBase.saddle.id)
+            setSaddled(true, p.name)
             false
-        } else {
-            false
-        }
+        } else false
     }
 
     override fun getMountedHeightOffset(): Double {
@@ -180,36 +175,36 @@ class EntityHorse(l: Level) : AnimalBase(l) {
         if(getSaddled())
         {
             if(removed)
-            {
                 super.method_920()
-
-            }
         }
-        else
-            super.method_920()
+        else super.method_920()
     }
 
     override fun getMobDrops(): Int {
-        if (method_1359())
-        {
-            return ItemBase.cookedPorkchop.id;
-        }
+        if(getSaddled()) return ItemBase.saddle.id
+
+        return if (method_1359())
+            ItemBase.cookedPorkchop.id
         else
-        {
-            return ItemBase.leather.id;
-        }
+            ItemBase.leather.id
+
     }
 
-    fun getSaddled(): Boolean {
+    /**
+     * Get info about horse.
+     * @return saddled or not.
+     */
+    public fun getSaddled(): Boolean {
         return (dataTracker.getByte(16).toInt() and 1) != 0
     }
 
-    fun setSaddled(flag: Boolean) {
+    private fun setSaddled(flag: Boolean, nickname: String) {
         if (flag) {
             dataTracker.setInt(16, java.lang.Byte.valueOf(1.toByte()))
         } else {
             dataTracker.setInt(16, java.lang.Byte.valueOf(0.toByte()))
         }
+        owner = nickname
     }
 
     override fun canSpawn(): Boolean {

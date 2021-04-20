@@ -9,6 +9,8 @@ import net.modificationstation.stationapi.api.common.event.entity.EntityRegister
 import net.modificationstation.stationapi.api.common.event.mod.PostInit
 import net.modificationstation.stationapi.api.common.mod.entrypoint.Entrypoint
 import net.modificationstation.stationapi.api.common.registry.ModID
+import java.io.BufferedReader
+import java.io.InputStreamReader
 import java.net.URL
 
 class EntityHorseListener {
@@ -16,7 +18,7 @@ class EntityHorseListener {
 
 
     companion object {
-
+        var needToRemind = false
     }
 
     @EventListener
@@ -31,11 +33,15 @@ class EntityHorseListener {
     }
 
     @EventListener(priority = ListenerPriority.LOW)
-    fun doNothing(event: PostInit)
+    fun updateCheck(event: PostInit)
     {
         Runnable {
-            var url: URL = URL("")
-        }
+            val url = URL("https://raw.githubusercontent.com/ChessChicken-KZ/BetaHorses/master/UPDATE.txt")
+            val br = BufferedReader(InputStreamReader(url.openStream()))
+            needToRemind = br.readLine().equals(MOD_ID!!.version.friendlyString)
+
+            br.close()
+        }.run()
     }
 
 
