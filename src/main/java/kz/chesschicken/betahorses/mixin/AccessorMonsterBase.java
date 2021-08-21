@@ -8,5 +8,5 @@ import org.spongepowered.asm.mixin.gen.Invoker;
 @Mixin(MonsterBase.class)
 public interface AccessorMonsterBase {
     @Invoker("getAttackTarget")
-    public EntityBase attackTarget();
+    EntityBase attackTarget();
 }

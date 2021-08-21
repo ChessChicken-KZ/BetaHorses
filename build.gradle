@@ -1,20 +1,21 @@
 buildscript {
     ext.kotlin_version = '1.4.30'
-    repositories {
-		mavenCentral()
-		jcenter()
+	repositories {
 		maven {
 			name = "Fabric"
 			url = "https://maven.fabricmc.net/"
 		}
+		gradlePluginPortal()
+		mavenCentral()
+		jcenter()
 		maven {
 			name = "Jitpack"
 			url 'https://jitpack.io/'
 		}
 	}
 	dependencies {
-		classpath 'com.github.Chocohead:Fabric-Loom:e3d1762'
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+		classpath 'com.github.Chocohead:Fabric-Loom:66ed9fe'
+		classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
 }
 
@@ -46,14 +47,21 @@ eclipse {
 
 repositories {
 	maven {
+		name = "Fabric"
+		url = "https://maven.fabricmc.net/"
+	}
+	mavenLocal()
+	gradlePluginPortal()
+	mavenCentral()
+	jcenter()
+	maven {
 		name = "Jitpack"
-		url "https://jitpack.io/"
+		url 'https://jitpack.io/'
 	}
 	maven {
 		name = "Glass"
 		url "https://maven.glass-launcher.net/repo/"
 	}
-    mavenCentral()
 }
 
 minecraft {
@@ -89,13 +97,14 @@ dependencies {
 
 	// adds some useful annotations for miscellaneous uses. does not add any dependencies, though people without the lib will be missing some useful context hints.
 	compile 'org.jetbrains:annotations:16.0.2'
-	
+
 	implementation "com.github.jhalterman:typetools:87240d6"
-	implementation "com.github.benjiman:expressions:7ed6748"
+	implementation "com.github.mineLdiver:expressions:2fa66db"
+	implementation "com.github.mineLdiver:UnsafeEvents:7efec57"
 
 	modImplementation "com.github.minecraft-cursed-legacy:cursed-fabric-loader:${project.loader_version}"
 
-	modImplementation "com.github.ModificationStation:StationAPI:${project.stapi_version}"
+	modImplementation 'com.github.ModificationStation:StationAPI:8ff5fd3fd2'
 
 	implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
 

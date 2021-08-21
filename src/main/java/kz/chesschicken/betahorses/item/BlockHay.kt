@@ -2,10 +2,10 @@ package kz.chesschicken.betahorses.item
 
 import kz.chesschicken.betahorses.init.BetaHorsesListener
 import net.minecraft.block.material.Material
-import net.modificationstation.stationapi.api.common.registry.Identifier
-import net.modificationstation.stationapi.template.common.block.BlockBase
+import net.modificationstation.stationapi.api.registry.Identifier
+import net.modificationstation.stationapi.api.template.block.TemplateBlockBase
 
-class BlockHay(ident: Identifier): BlockBase(ident, Material.ORGANIC) {
+class BlockHay(ident: Identifier): TemplateBlockBase(ident, Material.ORGANIC) {
     init {
         setHardness(0.8F)
         setSounds(GRASS_SOUNDS)

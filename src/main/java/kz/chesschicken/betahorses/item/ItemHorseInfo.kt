@@ -7,10 +7,10 @@ import net.minecraft.entity.player.PlayerBase
 import net.minecraft.item.ItemInstance
 import net.minecraft.level.Level
 import net.minecraft.util.hit.HitType
-import net.modificationstation.stationapi.api.common.registry.Identifier
-import net.modificationstation.stationapi.template.common.item.ItemBase
+import net.modificationstation.stationapi.api.registry.Identifier
+import net.modificationstation.stationapi.api.template.item.TemplateItemBase
 
-class ItemHorseInfo(ident: Identifier) : ItemBase(ident) {
+class ItemHorseInfo(ident: Identifier) : TemplateItemBase(ident) {
 
     override fun use(item: ItemInstance, level: Level, player: PlayerBase): ItemInstance {
         if(FabricLoader.getInstance().environmentType == EnvType.CLIENT)
