@@ -1,13 +1,11 @@
-# Fabric Example Mod with StationAPI and BIN Mappings for beta 1.7.3 server + client (Kotlin Edition)
+# BetaHorses
+
+Mod that adds several horse types into your game.
 
 ## Setup
+For setup instructions, please refer to [stationapi-example-mod page](https://github.com/calmilamsy/stationapi-example-mod).
 
-[See the StationAPI wiki.](https://github.com/ModificationStation/StationAPI)
-
-## Common Issues
-
-[Here.](https://github.com/calmilamsy/BIN-fabric-example-mod#common-issues)
+There is no Fabric-API for beta 1.7.3, so this mod uses [StationAPI](https://github.com/ModificationStation/StationAPI).
 
 ## License
-
-This template is available under the CC0 license. Feel free to learn from it and incorporate it in your own projects.
+The project is under [MIT Licence](https://github.com/ChessChicken-KZ/BetaHorses/blob/master/LICENSE). Feel free to look at it.
